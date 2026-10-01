@@ -1,0 +1,8 @@
+[
+  {
+    "id": 6,
+    "title": "What is a Set?",
+    "category": "data-structures",
+    "content": "A Set is a data structure that stores a collection of distinct elements. The signature property of a Set is that it doesn't allow duplicate elements."
+  }
+]

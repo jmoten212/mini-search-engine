@@ -1,0 +1,8 @@
+[
+  {
+    "id": 4,
+    "title": "What is a Hash Function?",
+    "category": "data-structures",
+    "content": "A Hash Function is a Function that translates keys to array indices. The keys should be evenly distributed across the array via a decent hash function to reduce collisions and ensure quick lookup speeds."
+  }
+]

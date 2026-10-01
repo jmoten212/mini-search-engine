@@ -1,0 +1,8 @@
+[
+  {
+    "id": 2,
+    "title": "What is a Queue?",
+    "category": "data-structures",
+    "content": "A Queue is a data structure that follows the principle of \"First in, First out\" (FIFO), where the first item added to the queue is the first one to be removed."
+  }
+]

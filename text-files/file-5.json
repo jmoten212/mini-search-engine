@@ -1,0 +1,8 @@
+[
+  {
+    "id": 5,
+    "title": "What is a Hash Table?",
+    "category": "data-structures",
+    "content": "A Hash Table is a data structure used to insert, look up, and remove key-value pairs quickly. It operates on the hashing concept, where each key is translated by a Hash Function into a distinct index in an array. The index functions as a storage location for the matching value. In simple words, it maps the keys with the value."
+  }
+]

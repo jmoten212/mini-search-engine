@@ -1,0 +1,8 @@
+[
+  {
+    "id": 3,
+    "title": "What is a Hash Map?",
+    "category": "data-structures",
+    "content": "A Hash Map is a form of Hash Table that usually holds a large number of entries. Using a Hash Map one can search, add, modify, and remove entries really fast. Hash Maps are used to find detailed information about something."
+  }
+]

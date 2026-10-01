@@ -1,0 +1,8 @@
+[
+  {
+    "id": 1,
+    "title": "What is a Stack?",
+    "category": "data-structures",
+    "content": "A Stack is a linear data structure that follows a particular order in which the operations are performed. The order is \"Last In, First Out\"(LIFO) which implies that the element that is inserted last, comes out first."
+  }
+]
