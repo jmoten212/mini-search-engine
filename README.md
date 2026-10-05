@@ -14,7 +14,7 @@ graph LR
 ```
 <br>
 
- Currently, the big O complexity of the search engine is mostly linear, with `indexer.ts` looping over each document and its unique terms before creating the query response to build the index, and `searchIndex` tokenizing each term, looking each up in the map, and iterating through the posting list for matching terms. As the size of the project grows, it'll be ideal to lower the complexity down closer to constant by reducing some of the repeated work during indexing and query processing.
+ Currently, the big O complexity of the search engine is mostly linear, with `indexer.ts` looping over each document and its unique terms before creating the query response to build the index, and `searchIndex` tokenizing each term, looking each up in the map, and iterating through the posting list for matching terms. As the size of the project grows, the goal is to lower the complexity down closer to constant by reducing some of the repeated work during indexing and query processing.
  <br>
  <br>
 
