@@ -20,4 +20,4 @@ graph LR
 
 <h2>Demo</h2>
 
- <video src="./public/videos/search_engine_demo_1.mov" autoplay loop muted playsinline width="100%"></video>
+<img width="1664" height="362" alt="search_engine_demo_1" src="https://github.com/user-attachments/assets/9a6cc675-12c1-46a7-b977-c4cdd7b90a11" />
