@@ -1,23 +1,28 @@
-import { buildIndexFromFolder, loadDocumentsFromFolder, searchIndex } from "./indexer.js";
+import { buildIndexFromFolderTfIdf, loadDocumentsFromFolder, rankDocumentsTfIdf } from "./indexer.js";
 
 async function main(): Promise<void> {
-  const query = process.argv.slice(2).join(" ").trim();
+  const args = process.argv.slice(2);
+  const debug = args.includes("--debug");
+  const query = args.filter((arg) => arg !== "--debug").join(" ").trim();
 
   if (!query) {
-    console.log("Usage: npm run search -- <query>");
+    console.log("Usage: npm run search -- [--debug] <query>");
     process.exitCode = 1;
     return;
   }
 
   const folderPath = "./text-files";
-  const [documents, index] = await Promise.all([
+  const [documents, stats] = await Promise.all([
     loadDocumentsFromFolder(folderPath),
-    buildIndexFromFolder(folderPath),
+    buildIndexFromFolderTfIdf(folderPath),
   ]);
 
-  const matchingIds = searchIndex(index, query);
-  const matchingDocuments = matchingIds
-    .map((id) => documents.find((document) => document.id === id))
+  const rankedDocuments = rankDocumentsTfIdf(stats, query);
+  const matchingDocuments = rankedDocuments
+    .map(({ documentId, score }) => {
+      const document = documents.find((entry) => entry.id === documentId);
+      return document ? { ...document, score } : null;
+    })
     .filter((document): document is NonNullable<typeof document> => Boolean(document));
 
   if (matchingDocuments.length === 0) {
@@ -26,7 +31,11 @@ async function main(): Promise<void> {
   }
 
   for (const document of matchingDocuments) {
-    console.log(`${document.id}: ${document.title}`);
+    if (debug) {
+      console.log(`${document.id}: ${document.title} (score: ${document.score.toFixed(3)})`);
+    } else {
+      console.log(`${document.id}: ${document.title}`);
+    }
   }
 }
 
