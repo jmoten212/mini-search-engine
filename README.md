@@ -48,4 +48,4 @@ Currently, the big O complexity of the search engine is mostly linear, with `ind
 <img width="1664" height="362" alt="search engine demo 1" src="https://github.com/user-attachments/assets/9a6cc675-12c1-46a7-b977-c4cdd7b90a11" />
 <br>
 
-<img width="1664" height="362" alt="search engine demo 2" src="https://github.com/user-attachments/assets/90d687ea-dccc-49ed-9108-a6e476f94ba9" />
+<img width="1664" height="362" alt="search engine demo 2" src="https://github.com/user-attachments/assets/cbe2ce3c-964a-476b-ba08-d1ddacc83a23" />
