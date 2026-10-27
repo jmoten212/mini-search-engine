@@ -50,3 +50,9 @@ Currently, the big O complexity of the search engine is mostly linear, with `ind
 <br>
 
 <img width="1664" height="362" alt="search engine demo 2" src="./public/images/tf-idf_demo.gif" />
+<br>
+
+<h3>Contact</h3>
+<b>Name:</b> James Moten <br>
+<b>Email:</b> jmoten212@gmail.com <br>
+<b>LinkedIn:</b> https://www.linkedin.com/in/james-moten/ <br>
