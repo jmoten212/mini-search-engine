@@ -46,8 +46,6 @@ Currently, the big O complexity of the search engine is mostly linear, with `ind
 <h2>Demo - Search Queue + TF-IDF Rank</h2>
 
 <img width="1664" height="362" alt="search engine demo 1" src="./public/images/search_queue_demo.gif" />
-<br>
-<br>
 
 <img width="1664" height="362" alt="search engine demo 2" src="./public/images/tf-idf_demo.gif" />
 <br>
