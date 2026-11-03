@@ -68,15 +68,18 @@ export function buildIndexTfIdf(documents: DocumentRecord[]): IndexStats {
 
     for (const term of tokens) {
       counts.set(term, (counts.get(term) ?? 0) + 1);
+    }
 
-      const postingList = index.get(term);
-      if (postingList) {
-        postingList.add(document.id);
-      } else {
-        index.set(term, new Set([document.id]));
-      }
+    for (const term of counts.keys()) {
+      const postingList = index.get(term) ?? new Set<number>();
 
-      documentFrequency.set(term, (documentFrequency.get(term) ?? 0) + 1);
+      postingList.add(document.id);
+      index.set(term, postingList);
+
+      documentFrequency.set(
+        term,
+        (documentFrequency.get(term) ?? 0) + 1
+      );
     }
 
     termFrequencies.set(document.id, counts);
