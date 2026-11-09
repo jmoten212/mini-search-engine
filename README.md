@@ -2,6 +2,9 @@
 
 Created a small-scale search engine that currently features a TF-IDF ranking layer along with tokenization, document loading, and query searching.
 <br>
+
+[Project Board](https://github.com/users/jmoten212/projects/2/views/1?filterQuery=)
+<br>
 <br>
 
 <h3>TF-IDF Ranking Layer</h3>
