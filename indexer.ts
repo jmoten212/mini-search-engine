@@ -16,7 +16,17 @@ export type IndexStats = {
   index: InvertedIndex;
   termFrequencies: TermFrequencyMap;
   documentFrequency: DocumentFrequency;
+  documentLengths: Map<number, number>;
+  averageDocumentLength: number;
 };
+
+export type Bm25Options = {
+  k1?: number;
+  b?: number;
+};
+
+const DEFAULT_K1 = 1.2;
+const DEFAULT_B = 0.75;
 
 export type RankedDocument = {
   documentId: number;
@@ -57,10 +67,12 @@ export function buildIndex(documents: DocumentRecord[]): InvertedIndex {
   return index;
 }
 
-export function buildIndexTfIdf(documents: DocumentRecord[]): IndexStats {
+export function buildIndexBm25(documents: DocumentRecord[]): IndexStats {
   const index: InvertedIndex = new Map();
   const termFrequencies: TermFrequencyMap = new Map();
   const documentFrequency: DocumentFrequency = new Map();
+  const documentLengths = new Map<number, number>();
+  let totalLength = 0;
 
   for (const document of documents) {
     const tokens = tokenize(documentText(document));
@@ -83,20 +95,17 @@ export function buildIndexTfIdf(documents: DocumentRecord[]): IndexStats {
     }
 
     termFrequencies.set(document.id, counts);
+    documentLengths.set(document.id, tokens.length);
+    totalLength += tokens.length;
   }
 
-  return { index, termFrequencies, documentFrequency };
+  const averageDocumentLength = documents.length === 0 ? 0 : totalLength / documents.length;
+
+  return { index, termFrequencies, documentFrequency, documentLengths, averageDocumentLength };
 }
 
-export function computeIdf(documentFrequency: DocumentFrequency, totalDocuments: number): Map<string, number> {
-  const idf = new Map<string, number>();
-
-  for (const [term, documentCount] of documentFrequency.entries()) {
-    const score = Math.log((totalDocuments + 1) / (documentCount + 1)) + 1;
-    idf.set(term, score);
-  }
-
-  return idf;
+export function computeBm25Idf(documentCount: number, totalDocuments: number): number {
+  return Math.log(1 + (totalDocuments - documentCount + 0.5) / (documentCount + 0.5));
 }
 
 export function searchIndex(index: InvertedIndex, query: string): number[] {
@@ -125,16 +134,19 @@ export function searchIndex(index: InvertedIndex, query: string): number[] {
     .map(([documentId]) => documentId);
 }
 
-export function rankDocumentsTfIdf(stats: IndexStats, query: string): RankedDocument[] {
-  const terms = tokenize(query);
-  const uniqueTerms = [...new Set(terms)];
+export function rankDocumentsBm25(
+  stats: IndexStats,
+  query: string,
+  { k1 = DEFAULT_K1, b = DEFAULT_B }: Bm25Options = {}
+): RankedDocument[] {
+  const uniqueTerms = [...new Set(tokenize(query))];
 
   if (uniqueTerms.length === 0) {
     return [];
   }
 
   const scores = new Map<number, number>();
-  const idfValues = computeIdf(stats.documentFrequency, stats.termFrequencies.size);
+  const totalDocuments = stats.termFrequencies.size;
 
   for (const term of uniqueTerms) {
     const postingList = stats.index.get(term);
@@ -142,14 +154,15 @@ export function rankDocumentsTfIdf(stats: IndexStats, query: string): RankedDocu
       continue;
     }
 
-    const idf = idfValues.get(term) ?? 0;
+    const idf = computeBm25Idf(stats.documentFrequency.get(term) ?? 0, totalDocuments);
 
     for (const documentId of postingList) {
-      const termCounts = stats.termFrequencies.get(documentId) ?? new Map();
-      const rawFrequency = termCounts.get(term) ?? 0;
-      const tf = rawFrequency === 0 ? 0 : 1 + Math.log(rawFrequency);
+      const frequency = stats.termFrequencies.get(documentId)?.get(term) ?? 0;
+      const documentLength = stats.documentLengths.get(documentId) ?? 0;
+      const lengthRatio = stats.averageDocumentLength === 0 ? 0 : documentLength / stats.averageDocumentLength;
+      const tf = (frequency * (k1 + 1)) / (frequency + k1 * (1 - b + b * lengthRatio));
 
-      scores.set(documentId, (scores.get(documentId) ?? 0) + tf * idf);
+      scores.set(documentId, (scores.get(documentId) ?? 0) + idf * tf);
     }
   }
 
@@ -158,8 +171,8 @@ export function rankDocumentsTfIdf(stats: IndexStats, query: string): RankedDocu
     .map(([documentId, score]) => ({ documentId, score }));
 }
 
-export function searchIndexTfIdf(stats: IndexStats, query: string): number[] {
-  return rankDocumentsTfIdf(stats, query).map(({ documentId }) => documentId);
+export function searchIndexBm25(stats: IndexStats, query: string, options?: Bm25Options): number[] {
+  return rankDocumentsBm25(stats, query, options).map(({ documentId }) => documentId);
 }
 
 export async function loadDocumentsFromFolder(folderPath: string): Promise<DocumentRecord[]> {
@@ -182,7 +195,7 @@ export async function buildIndexFromFolder(folderPath: string): Promise<Inverted
   return buildIndex(documents);
 }
 
-export async function buildIndexFromFolderTfIdf(folderPath: string): Promise<IndexStats> {
+export async function buildIndexFromFolderBm25(folderPath: string): Promise<IndexStats> {
   const documents = await loadDocumentsFromFolder(folderPath);
-  return buildIndexTfIdf(documents);
+  return buildIndexBm25(documents);
 }

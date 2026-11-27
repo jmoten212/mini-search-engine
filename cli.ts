@@ -1,4 +1,4 @@
-import { buildIndexFromFolderTfIdf, loadDocumentsFromFolder, rankDocumentsTfIdf } from "./indexer.js";
+import { buildIndexFromFolderBm25, loadDocumentsFromFolder, rankDocumentsBm25 } from "./indexer.js";
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -14,10 +14,10 @@ async function main(): Promise<void> {
   const folderPath = "./text-files";
   const [documents, stats] = await Promise.all([
     loadDocumentsFromFolder(folderPath),
-    buildIndexFromFolderTfIdf(folderPath),
+    buildIndexFromFolderBm25(folderPath),
   ]);
 
-  const rankedDocuments = rankDocumentsTfIdf(stats, query);
+  const rankedDocuments = rankDocumentsBm25(stats, query);
   const matchingDocuments = rankedDocuments
     .map(({ documentId, score }) => {
       const document = documents.find((entry) => entry.id === documentId);
